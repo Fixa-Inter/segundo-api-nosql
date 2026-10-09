@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ModeloChecklist {
     private Long id;
-    private Long usuarioId;
+    private Long enderecoId;
     private String nome;
     private Integer periodicidade;
     private List<Campo> campos;
