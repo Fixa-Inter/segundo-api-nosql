@@ -2,8 +2,8 @@ package org.example.segundoapinosql.adapters.dto.input.ModeloChecklist;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-import org.example.segundoapinosql.adapters.dto.input.Campo.CampoInputDTO;
-import org.example.segundoapinosql.adapters.dto.input.ModeloEquipamento.ModeloEquipamentoInputDTO;
+import org.example.segundoapinosql.adapters.dto.input.Campo.CampoCadastrarInputDTO;
+import org.example.segundoapinosql.adapters.dto.input.ModeloEquipamento.ModeloEquipamentoCadastrarInputDTO;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,8 +21,8 @@ public record ModeloChecklistCadastrarInputDTO(
 
         Boolean obrigatorio,
 
-        @NotEmpty(message = "validation.modeloChecklist.campos.required") List<@Valid CampoInputDTO> campos,
+        @NotEmpty(message = "validation.modeloChecklist.campos.required") List<@Valid CampoCadastrarInputDTO> campos,
 
-        List<@Valid ModeloEquipamentoInputDTO> modelos
+        List<@Valid ModeloEquipamentoCadastrarInputDTO> modelos
 ) {
 }

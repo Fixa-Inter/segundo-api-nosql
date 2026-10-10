@@ -1,7 +1,7 @@
 package org.example.segundoapinosql.adapters.dto.output;
 
 public record OpcaoOutputDTO(
-        Long id,
+        String id,
         String nome,
         Boolean obrigatorio
 ) {
