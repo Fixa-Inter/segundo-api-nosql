@@ -5,13 +5,18 @@ import lombok.RequiredArgsConstructor;
 import org.example.segundoapinosql.adapters.dto.input.Campo.CampoAtualizarInputDTO;
 import org.example.segundoapinosql.adapters.dto.input.ModeloChecklist.ModeloChecklistAtualizarInputDTO;
 import org.example.segundoapinosql.adapters.dto.input.Opcao.OpcaoAtualizarInputDTO;
+import org.example.segundoapinosql.adapters.dto.input.ModeloEquipamento.ModeloEquipamentoAtualizarInputDTO;
 import org.example.segundoapinosql.application.annotation.UseCase;
 import org.example.segundoapinosql.domain.model.Campo;
 import org.example.segundoapinosql.domain.model.ModeloChecklist;
+import org.example.segundoapinosql.domain.model.ModeloEquipamento;
+import org.example.segundoapinosql.domain.model.ModeloEquipamentoChecklist;
 import org.example.segundoapinosql.domain.model.Opcao;
 import org.example.segundoapinosql.domain.model.Usuario;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
+import org.example.segundoapinosql.domain.repository.ModeloEquipamentoRepository;
+import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
 import org.example.segundoapinosql.infrastructure.exception.RegraProblemaException;
 
 import java.util.List;
@@ -27,6 +32,8 @@ public class AtualizarModeloChecklist {
 
     private final ModeloChecklistRepository modeloChecklistRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ModeloEquipamentoRepository modeloEquipamentoRepository;
+    private final EquipamentoRepository equipamentoRepository;
 
     public ModeloChecklist atualizar(
             ModeloChecklistAtualizarInputDTO dto,
@@ -47,12 +54,71 @@ public class AtualizarModeloChecklist {
         if (dto.primeiraAbertura() != null) modeloChecklist.setPrimeiraAbertura(dto.primeiraAbertura());
         if (dto.obrigatorio() != null) modeloChecklist.setObrigatorio(dto.obrigatorio());
 
+        if (dto.modelos() != null) {
+            modeloChecklist.setModelos(validarEConstruirModelos(dto.modelos(), usuario));
+        }
+
         if (dto.campos() != null && !dto.campos().isEmpty()) modeloChecklist.setCampos(atualizarCampos(
                 dto.campos(),
                 modeloChecklist.getCampos()
         ));
 
         return modeloChecklistRepository.save(modeloChecklist);
+    }
+
+    private List<ModeloEquipamentoChecklist> validarEConstruirModelos(
+            List<ModeloEquipamentoAtualizarInputDTO> modelosDto,
+            Usuario usuario
+    ) {
+        return modelosDto.stream()
+                .map(modeloDto -> {
+                    ModeloEquipamento modelo = modeloEquipamentoRepository
+                            .findById(modeloDto.modeloEquipamentoId())
+                            .orElseThrow(() -> new EntityNotFoundException(
+                                    "exception.modeloEquipamento.notFound"
+                            ));
+
+                    validarEndereco(modelo.getUsuario(), usuario);
+
+                    List<Long> equipamentoIds = modeloDto.equipamentos() == null
+                            ? List.of()
+                            : modeloDto.equipamentos().stream()
+                            .map(equipamentoDto -> {
+                                var equipamento = equipamentoRepository
+                                        .findById(equipamentoDto.equipamentoId())
+                                        .orElseThrow(() -> new EntityNotFoundException(
+                                                "exception.equipamento.notFound"
+                                        ));
+
+                                if (equipamento.getModeloEquipamento() == null
+                                        || !modelo.getId().equals(
+                                        equipamento.getModeloEquipamento().getId())) {
+                                    throw new RegraProblemaException(
+                                            "exception.equipamento.modelo.invalid"
+                                    );
+                                }
+
+                                validarEndereco(
+                                        equipamento.getModeloEquipamento().getUsuario(),
+                                        usuario
+                                );
+                                return equipamento.getId();
+                            })
+                            .toList();
+
+                    return new ModeloEquipamentoChecklist(
+                            modelo.getId(),
+                            equipamentoIds
+                    );
+                })
+                .toList();
+    }
+
+    private void validarEndereco(Usuario proprietario, Usuario usuario) {
+        if (proprietario == null
+                || !usuario.getEnderecoId().equals(proprietario.getEnderecoId())) {
+            throw new RegraProblemaException("exception.endereco.required");
+        }
     }
 
     private List<Campo> atualizarCampos(
