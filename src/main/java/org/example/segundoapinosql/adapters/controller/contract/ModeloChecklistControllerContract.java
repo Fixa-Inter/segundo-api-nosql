@@ -24,4 +24,9 @@ public interface ModeloChecklistControllerContract {
             Authentication authentication
     );
 
+    ResponseEntity<ModeloChecklistOutputDTO> deletar(
+            String modeloChecklistId,
+            Authentication authentication
+    );
+
 }

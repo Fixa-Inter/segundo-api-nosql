@@ -10,6 +10,7 @@ import org.example.segundoapinosql.adapters.mapper.ModeloChecklistMapper;
 import org.example.segundoapinosql.adapters.utils.ControllerUtils;
 import org.example.segundoapinosql.application.usecase.ModeloChecklist.AtualizarModeloChecklist;
 import org.example.segundoapinosql.application.usecase.ModeloChecklist.CadastrarModeloChecklist;
+import org.example.segundoapinosql.application.usecase.ModeloChecklist.DeletarModeloChecklist;
 import org.example.segundoapinosql.application.usecase.ModeloChecklist.ListarModeloChecklist;
 import org.example.segundoapinosql.domain.model.ModeloChecklist;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class ModeloChecklistController implements ModeloChecklistControllerContr
     private final ListarModeloChecklist listarModeloChecklist;
     private final CadastrarModeloChecklist cadastrarModeloChecklist;
     private final AtualizarModeloChecklist atualizarModeloChecklist;
+    private final DeletarModeloChecklist deletarModeloChecklist;
 
     // Mapper
     private final ModeloChecklistMapper mapper;
@@ -60,6 +62,7 @@ public class ModeloChecklistController implements ModeloChecklistControllerContr
                 )));
     }
 
+    // PATCH
     @Override
     @PatchMapping("/atualizar")
     public ResponseEntity<ModeloChecklistOutputDTO> atualizar(
@@ -68,6 +71,19 @@ public class ModeloChecklistController implements ModeloChecklistControllerContr
     ) {
         return ResponseEntity.ok(mapper.toOutputDTO(atualizarModeloChecklist.atualizar(
                 dto,
+                ControllerUtils.usuarioId(authentication)
+        )));
+    }
+
+    // DELETE
+    @Override
+    @DeleteMapping("/deletar/{modeloChecklistId}")
+    public ResponseEntity<ModeloChecklistOutputDTO> deletar(
+            @PathVariable String modeloChecklistId,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(mapper.toOutputDTO(deletarModeloChecklist.deletar(
+                modeloChecklistId,
                 ControllerUtils.usuarioId(authentication)
         )));
     }

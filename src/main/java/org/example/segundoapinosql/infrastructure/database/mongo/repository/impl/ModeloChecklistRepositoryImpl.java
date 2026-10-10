@@ -38,4 +38,9 @@ public class ModeloChecklistRepositoryImpl implements ModeloChecklistRepository 
                 .findById(modeloChecklistId)
                 .map(mapper::toModel);
     }
+
+    @Override
+    public void deleteById(String modeloEquipamentoId) {
+        mongoRepository.deleteById(modeloEquipamentoId);
+    }
 }

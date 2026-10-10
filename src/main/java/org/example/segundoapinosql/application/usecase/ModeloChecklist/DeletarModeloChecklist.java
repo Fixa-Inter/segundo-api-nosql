@@ -2,8 +2,6 @@ package org.example.segundoapinosql.application.usecase.ModeloChecklist;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.example.segundoapinosql.adapters.dto.input.ModeloChecklist.ModeloChecklistAtualizarInputDTO;
-import org.example.segundoapinosql.adapters.dto.output.ModeloChecklistOutputDTO;
 import org.example.segundoapinosql.application.annotation.UseCase;
 import org.example.segundoapinosql.domain.model.ModeloChecklist;
 import org.example.segundoapinosql.domain.model.Usuario;
@@ -11,36 +9,26 @@ import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
 import org.example.segundoapinosql.infrastructure.exception.RegraProblemaException;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @UseCase
 @RequiredArgsConstructor
-public class AtualizarModeloChecklist {
+public class DeletarModeloChecklist {
 
     private final ModeloChecklistRepository modeloChecklistRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public ModeloChecklist atualizar(
-            ModeloChecklistAtualizarInputDTO dto,
-            Long usuarioId
-    ) {
+    public ModeloChecklist deletar(String modeloChecklistId, Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new EntityNotFoundException("validation.usuario.required"));
 
-        ModeloChecklist modeloChecklist = modeloChecklistRepository.findById(dto.id())
+        ModeloChecklist modeloChecklist = modeloChecklistRepository.findById(modeloChecklistId)
                 .orElseThrow(() -> new EntityNotFoundException("exception.modeloChecklist.notFound"));
 
         if (!usuario.getEnderecoId().equals(modeloChecklist.getEnderecoId())) {
             throw new RegraProblemaException("exception.access.denied");
         }
 
-        if (dto.nome() != null) modeloChecklist.setNome(dto.nome());
-        if (dto.periodicidade() != null) modeloChecklist.setPeriodicidade(dto.periodicidade());
-        if (dto.primeiraAbertura() != null) modeloChecklist.setPrimeiraAbertura(dto.primeiraAbertura());
-        if (dto.obrigatorio() != null) modeloChecklist.setObrigatorio(dto.obrigatorio());
-
-        modeloChecklistRepository.save(modeloChecklist);
+        modeloChecklistRepository.deleteById(modeloChecklistId);
         return modeloChecklist;
     }
+
 }
