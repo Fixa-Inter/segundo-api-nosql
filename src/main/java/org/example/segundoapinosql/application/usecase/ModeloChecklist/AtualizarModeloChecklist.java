@@ -49,7 +49,14 @@ public class AtualizarModeloChecklist {
             throw new RegraProblemaException("exception.access.denied");
         }
 
-        if (dto.nome() != null) modeloChecklist.setNome(dto.nome());
+        if (dto.nome() != null) {
+            validarNomeChecklistDisponivel(
+                    dto.nome(),
+                    modeloChecklist.getEnderecoId(),
+                    modeloChecklist.getId()
+            );
+            modeloChecklist.setNome(dto.nome());
+        }
         if (dto.periodicidade() != null) modeloChecklist.setPeriodicidade(dto.periodicidade());
         if (dto.primeiraAbertura() != null) modeloChecklist.setPrimeiraAbertura(dto.primeiraAbertura());
         if (dto.obrigatorio() != null) modeloChecklist.setObrigatorio(dto.obrigatorio());
@@ -64,6 +71,20 @@ public class AtualizarModeloChecklist {
         ));
 
         return modeloChecklistRepository.save(modeloChecklist);
+    }
+
+    private void validarNomeChecklistDisponivel(
+            String nome,
+            Long enderecoId,
+            String idAtual
+    ) {
+        boolean duplicado = modeloChecklistRepository.findAll(enderecoId).stream()
+                .anyMatch(modelo -> !Objects.equals(modelo.getId(), idAtual)
+                        && normalizar(modelo.getNome()).equals(normalizar(nome)));
+
+        if (duplicado) {
+            throw new RegraProblemaException("exception.modeloChecklist.duplicate");
+        }
     }
 
     private List<ModeloEquipamentoChecklist> validarEConstruirModelos(

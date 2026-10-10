@@ -35,6 +35,8 @@ public class CadastrarModeloChecklist {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.usuario.required"));
 
+        validarNomeChecklistDisponivel(dto.nome(), usuario.getEnderecoId());
+
         List<Campo> campos = dto.campos().stream()
                 .map(campo -> new Campo(
                         UUID.randomUUID().toString(),
@@ -72,6 +74,19 @@ public class CadastrarModeloChecklist {
         );
 
         return modeloChecklistRepository.save(modeloChecklist);
+    }
+
+    private void validarNomeChecklistDisponivel(String nome, Long enderecoId) {
+        boolean duplicado = modeloChecklistRepository.findAll(enderecoId).stream()
+                .anyMatch(modelo -> normalizar(modelo.getNome()).equals(normalizar(nome)));
+
+        if (duplicado) {
+            throw new RegraProblemaException("exception.modeloChecklist.duplicate");
+        }
+    }
+
+    private String normalizar(String valor) {
+        return valor == null ? "" : valor.trim().toLowerCase(java.util.Locale.ROOT);
     }
 
     private ModeloEquipamentoChecklist construirModeloEquipamento(
