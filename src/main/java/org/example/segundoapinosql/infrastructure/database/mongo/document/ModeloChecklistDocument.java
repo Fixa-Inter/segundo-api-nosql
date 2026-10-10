@@ -1,7 +1,7 @@
 package org.example.segundoapinosql.infrastructure.database.mongo.document;
 
 import org.example.segundoapinosql.domain.model.Campo;
-import org.example.segundoapinosql.domain.model.ModeloEquipamento;
+import org.example.segundoapinosql.domain.model.ModeloEquipamentoChecklist;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.AllArgsConstructor;
@@ -29,5 +29,5 @@ public class ModeloChecklistDocument {
     private List<Campo> campos;
     private Boolean obrigatorio;
     private LocalDate primeiraAbertura;
-    private List<ModeloEquipamento> modelos;
+    private List<ModeloEquipamentoChecklist> modelos;
 }

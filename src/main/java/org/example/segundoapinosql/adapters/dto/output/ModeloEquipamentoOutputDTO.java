@@ -4,7 +4,6 @@ import java.util.List;
 
 public record ModeloEquipamentoOutputDTO (
         Long modeloEquipamentoId,
-        String nome,
-        List<EquipamentoOutputDTO> equipamentos
+        List<Long> equipamentoIds
 ) {
 }

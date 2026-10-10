@@ -24,6 +24,7 @@ public record ModeloChecklistAtualizarInputDTO(
         LocalDate primeiraAbertura,
 
         Boolean obrigatorio,
-        List<CampoAtualizarInputDTO> campos
+        List<CampoAtualizarInputDTO> campos,
+        List<ModeloEquipamentoAtualizarInputDTO> modelos
 ) {
 }

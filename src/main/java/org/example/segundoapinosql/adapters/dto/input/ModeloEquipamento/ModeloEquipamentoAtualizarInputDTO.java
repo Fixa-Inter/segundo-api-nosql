@@ -9,7 +9,6 @@ public record ModeloEquipamentoAtualizarInputDTO(
         @NotNull(message = "validation.equipamentoId.required")
         Long modeloEquipamentoId,
 
-        String nome,
         List<EquipamentoAtualizarInputDTO> equipamentos
 ) {
 }

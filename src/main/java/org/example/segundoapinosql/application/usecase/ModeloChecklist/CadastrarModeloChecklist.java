@@ -7,11 +7,16 @@ import org.example.segundoapinosql.domain.model.Campo;
 import org.example.segundoapinosql.domain.model.Equipamento;
 import org.example.segundoapinosql.domain.model.ModeloChecklist;
 import org.example.segundoapinosql.domain.model.ModeloEquipamento;
+import org.example.segundoapinosql.domain.model.ModeloEquipamentoChecklist;
 import org.example.segundoapinosql.domain.model.Opcao;
 import org.example.segundoapinosql.domain.model.Usuario;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
+import org.example.segundoapinosql.domain.repository.ModeloEquipamentoRepository;
+import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
 import org.example.segundoapinosql.infrastructure.exception.EntidadeNaoEncontradaException;
+import org.example.segundoapinosql.infrastructure.exception.RegraProblemaException;
+import org.example.segundoapinosql.adapters.dto.input.ModeloEquipamento.ModeloEquipamentoCadastrarInputDTO;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +28,8 @@ public class CadastrarModeloChecklist {
 
     private final ModeloChecklistRepository modeloChecklistRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ModeloEquipamentoRepository modeloEquipamentoRepository;
+    private final EquipamentoRepository equipamentoRepository;
 
     public ModeloChecklist cadastrar(ModeloChecklistCadastrarInputDTO dto, Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -46,19 +53,10 @@ public class CadastrarModeloChecklist {
                 ))
                 .toList();
 
-        List<ModeloEquipamento> modelos = dto.modelos() == null
+        List<ModeloEquipamentoChecklist> modelos = dto.modelos() == null
                 ? Collections.emptyList()
                 : dto.modelos().stream()
-                .map(modelo -> new ModeloEquipamento(
-                        modelo.modeloEquipamentoId(),
-                        modelo.nome(),
-                        modelo.equipamentos().stream()
-                                .map(equipamento -> new Equipamento(
-                                        equipamento.id(),
-                                        equipamento.nome()
-                                ))
-                                .toList()
-                ))
+                .map(modelo -> construirModeloEquipamento(modelo, usuario))
                 .toList();
 
         ModeloChecklist modeloChecklist = new ModeloChecklist(
@@ -74,6 +72,39 @@ public class CadastrarModeloChecklist {
         );
 
         return modeloChecklistRepository.save(modeloChecklist);
+    }
+
+    private ModeloEquipamentoChecklist construirModeloEquipamento(
+            ModeloEquipamentoCadastrarInputDTO dto,
+            Usuario usuario
+    ) {
+        ModeloEquipamento modelo = modeloEquipamentoRepository.findById(dto.modeloEquipamentoId())
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.modeloEquipamento.notFound"));
+
+        validarEndereco(modelo.getUsuario(), usuario);
+
+        List<Long> equipamentoIds = dto.equipamentos().stream()
+                .map(item -> {
+                    Equipamento equipamento = equipamentoRepository.findById(item.equipamentoId())
+                            .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.equipamento.notFound"));
+
+                    if (equipamento.getModeloEquipamento() == null
+                            || !modelo.getId().equals(equipamento.getModeloEquipamento().getId())) {
+                        throw new RegraProblemaException("exception.equipamento.modelo.invalid");
+                    }
+
+                    validarEndereco(equipamento.getModeloEquipamento().getUsuario(), usuario);
+                    return equipamento.getId();
+                })
+                .toList();
+
+        return new ModeloEquipamentoChecklist(modelo.getId(), equipamentoIds);
+    }
+
+    private void validarEndereco(Usuario proprietario, Usuario usuario) {
+        if (proprietario == null || !usuario.getEnderecoId().equals(proprietario.getEnderecoId())) {
+            throw new RegraProblemaException("exception.endereco.required");
+        }
     }
 
 }

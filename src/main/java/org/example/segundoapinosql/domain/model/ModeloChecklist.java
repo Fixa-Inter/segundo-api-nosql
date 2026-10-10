@@ -20,5 +20,5 @@ public class ModeloChecklist {
     private List<Campo> campos;
     private Boolean obrigatorio;
     private LocalDate primeiraAbertura;
-    private List<ModeloEquipamento> modelos;
+    private List<ModeloEquipamentoChecklist> modelos;
 }

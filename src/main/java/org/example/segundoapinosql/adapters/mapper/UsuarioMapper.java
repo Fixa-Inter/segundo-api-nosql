@@ -7,7 +7,6 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface UsuarioMapper {
 
-    UsuarioEntity toEntity(Usuario model);
     Usuario toModel(UsuarioEntity entity);
 
 }

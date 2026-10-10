@@ -1,6 +1,5 @@
 package org.example.segundoapinosql.domain.model;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ModeloEquipamento {
-    private Long modeloEquipamentoId;
+    private Long id;
+    private Usuario usuario;
     private String nome;
-    private List<Equipamento> equipamentos;
 }
