@@ -17,20 +17,19 @@ import org.example.segundoapinosql.adapters.dto.output.ModeloEquipamentoOutputDT
 import org.example.segundoapinosql.adapters.dto.output.OpcaoOutputDTO;
 import org.example.segundoapinosql.infrastructure.database.mongo.document.ModeloChecklistDocument;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface ModeloChecklistMapper {
 
     ModeloChecklistDocument toDocument(ModeloChecklist model);
     ModeloChecklist toModel(ModeloChecklistDocument entity);
-    ModeloChecklist toModel(ModeloChecklistInputDTO dto);
-    Campo toModel(CampoInputDTO dto);
-    Opcao toModel(OpcaoInputDTO dto);
-    ModeloEquipamento toModel(ModeloEquipamentoInputDTO dto);
-    Equipamento toModel(EquipamentoInputDTO dto);
 
     ModeloChecklistOutputDTO toOutputDTO(ModeloChecklist model);
+
+    @Mapping(source = "tipoCampo.nome", target = "tipoCampo")
     CampoOutputDTO toOutputDTO(Campo campo);
+
     OpcaoOutputDTO toOutputDTO(Opcao opcao);
     ModeloEquipamentoOutputDTO toOutputDTO(ModeloEquipamento modeloEquipamento);
     EquipamentoOutputDTO toOutputDTO(Equipamento equipamento);

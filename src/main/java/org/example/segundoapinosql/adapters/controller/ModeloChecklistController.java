@@ -8,14 +8,12 @@ import org.example.segundoapinosql.adapters.dto.output.ModeloChecklistOutputDTO;
 import org.example.segundoapinosql.adapters.mapper.ModeloChecklistMapper;
 import org.example.segundoapinosql.adapters.utils.ControllerUtils;
 import org.example.segundoapinosql.application.usecase.ModeloChecklist.CadastrarModeloChecklist;
+import org.example.segundoapinosql.application.usecase.ModeloChecklist.ListarModeloChecklist;
 import org.example.segundoapinosql.domain.model.ModeloChecklist;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,10 +23,22 @@ import java.util.List;
 public class ModeloChecklistController implements ModeloChecklistControllerContract {
 
     // UseCases
+    private final ListarModeloChecklist listarModeloChecklist;
     private final CadastrarModeloChecklist cadastrarModeloChecklist;
 
     // Mapper
     private final ModeloChecklistMapper mapper;
+
+    // GET
+    @Override
+    @GetMapping("/listar")
+    public ResponseEntity<List<ModeloChecklistOutputDTO>> listar(
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(toOutputDTO(
+                listarModeloChecklist.listar(ControllerUtils.usuarioId(authentication))
+        ));
+    }
 
     // POST
     @Override

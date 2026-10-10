@@ -24,7 +24,6 @@ public class CadastrarModeloChecklist {
 
     private final ModeloChecklistRepository modeloChecklistRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ModeloChecklistMapper mapper;
 
     public ModeloChecklist cadastrar(ModeloChecklistInputDTO dto, Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)

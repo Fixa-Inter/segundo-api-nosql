@@ -7,6 +7,8 @@ import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.infrastructure.database.mongo.repository.MongoModeloChecklistRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 @RequiredArgsConstructor
 public class ModeloChecklistRepositoryImpl implements ModeloChecklistRepository {
@@ -19,5 +21,13 @@ public class ModeloChecklistRepositoryImpl implements ModeloChecklistRepository 
         return mapper.toModel(
                 mongoRepository.save(mapper.toDocument(modeloChecklist))
         );
+    }
+
+    @Override
+    public List<ModeloChecklist> findAll(Long usuarioId) {
+        return mongoRepository.findAllByEnderecoId(usuarioId)
+                .stream()
+                .map(mapper::toModel)
+                .toList();
     }
 }
