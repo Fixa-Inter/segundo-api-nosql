@@ -12,11 +12,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ModeloChecklist {
-    private Long id;
+    private String id;
+    private Long usuarioId;
     private Long enderecoId;
     private String nome;
     private Integer periodicidade;
     private List<Campo> campos;
     private Boolean obrigatorio;
     private LocalDate primeiraAbertura;
+    private List<ModeloEquipamento> modelos;
 }

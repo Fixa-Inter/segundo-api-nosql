@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InspecaoChecklist {
-    private Long id;
+    private String id;
     private Long modeloEquipamentoChecklistId;
     private Long equipamentoId;
     private LocalDate dataAtualizacao;

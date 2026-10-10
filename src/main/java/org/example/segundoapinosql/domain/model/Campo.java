@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Campo {
-    private Long id;
+    private String id;
     private String nome;
     private TipoCampo tipoCampo;
     private Boolean obrigatorio;

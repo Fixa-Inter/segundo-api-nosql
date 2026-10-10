@@ -1,5 +1,6 @@
 package org.example.segundoapinosql.domain.model;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Opcao {
-    private String id;
+public class ModeloEquipamento {
+    private Long modeloEquipamentoId;
     private String nome;
-    private Boolean obrigatorio;
+    private List<Equipamento> equipamentos;
 }

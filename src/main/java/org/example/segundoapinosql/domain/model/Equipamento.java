@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Opcao {
-    private String id;
+public class Equipamento {
+    private Long id;
     private String nome;
-    private Boolean obrigatorio;
 }
