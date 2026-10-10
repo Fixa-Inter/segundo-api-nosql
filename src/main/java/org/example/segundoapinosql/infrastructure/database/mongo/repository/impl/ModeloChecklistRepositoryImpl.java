@@ -8,6 +8,7 @@ import org.example.segundoapinosql.infrastructure.database.mongo.repository.Mong
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,5 +30,12 @@ public class ModeloChecklistRepositoryImpl implements ModeloChecklistRepository 
                 .stream()
                 .map(mapper::toModel)
                 .toList();
+    }
+
+    @Override
+    public Optional<ModeloChecklist> findById(String modeloChecklistId) {
+        return mongoRepository
+                .findById(modeloChecklistId)
+                .map(mapper::toModel);
     }
 }

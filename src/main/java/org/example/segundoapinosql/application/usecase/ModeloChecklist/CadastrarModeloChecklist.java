@@ -1,7 +1,7 @@
 package org.example.segundoapinosql.application.usecase.ModeloChecklist;
 
 import lombok.RequiredArgsConstructor;
-import org.example.segundoapinosql.adapters.dto.input.ModeloChecklistInputDTO;
+import org.example.segundoapinosql.adapters.dto.input.ModeloChecklist.ModeloChecklistCadastrarInputDTO;
 import org.example.segundoapinosql.application.annotation.UseCase;
 import org.example.segundoapinosql.domain.model.Campo;
 import org.example.segundoapinosql.domain.model.Equipamento;
@@ -11,7 +11,6 @@ import org.example.segundoapinosql.domain.model.Opcao;
 import org.example.segundoapinosql.domain.model.Usuario;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
-import org.example.segundoapinosql.adapters.mapper.ModeloChecklistMapper;
 import org.example.segundoapinosql.infrastructure.exception.EntidadeNaoEncontradaException;
 
 import java.util.Collections;
@@ -25,11 +24,9 @@ public class CadastrarModeloChecklist {
     private final ModeloChecklistRepository modeloChecklistRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public ModeloChecklist cadastrar(ModeloChecklistInputDTO dto, Long usuarioId) {
+    public ModeloChecklist cadastrar(ModeloChecklistCadastrarInputDTO dto, Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new EntidadeNaoEncontradaException(
-                        "Usuário não encontrado: " + usuarioId
-                ));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.usuario.required"));
 
         List<Campo> campos = dto.campos().stream()
                 .map(campo -> new Campo(

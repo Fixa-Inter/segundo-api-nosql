@@ -1,4 +1,4 @@
-package org.example.segundoapinosql.adapters.dto.input;
+package org.example.segundoapinosql.adapters.dto.input.Equipamento;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
