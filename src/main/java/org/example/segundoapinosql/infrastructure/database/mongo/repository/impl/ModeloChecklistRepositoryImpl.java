@@ -2,7 +2,9 @@ package org.example.segundoapinosql.infrastructure.database.mongo.repository.imp
 
 import lombok.RequiredArgsConstructor;
 import org.example.segundoapinosql.adapters.mapper.ModeloChecklistMapper;
+import org.example.segundoapinosql.domain.model.Equipamento;
 import org.example.segundoapinosql.domain.model.ModeloChecklist;
+import org.example.segundoapinosql.domain.model.ModeloEquipamento;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.infrastructure.database.mongo.repository.MongoModeloChecklistRepository;
 import org.springframework.stereotype.Repository;

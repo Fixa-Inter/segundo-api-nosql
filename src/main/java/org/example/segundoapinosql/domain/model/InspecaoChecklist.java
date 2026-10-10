@@ -16,7 +16,7 @@ public class InspecaoChecklist {
     private String id;
     private Long modeloEquipamentoChecklistId;
     private Long equipamentoId;
-    private LocalDate dataAtualizacao;
+    private LocalDate dataUltimaInspecao;
     private LocalDate prazoInspecao;
     private Boolean status;
     private List<RegistroInspecaoChecklist> registros;

@@ -5,4 +5,5 @@ import org.example.segundoapinosql.domain.model.ModeloEquipamento;
 
 public interface ModeloEquipamentoRepository {
     Optional<ModeloEquipamento> findById(Long id);
+
 }
