@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -14,10 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class InspecaoChecklist {
     private String id;
-    private Long modeloEquipamentoChecklistId;
+    private String modeloChecklistId;
     private Long equipamentoId;
-    private LocalDate dataAtualizacao;
-    private LocalDate prazoInspecao;
-    private Boolean status;
-    private List<RegistroInspecaoChecklist> registros;
+    private LocalDate dataInspecao;
+    private Map<String, Object> dados;
 }

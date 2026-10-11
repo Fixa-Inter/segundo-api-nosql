@@ -14,8 +14,8 @@ public enum TipoCampo {
     TEXTO("Texto", "String"),
     NUMERO("Número", "Double"),
     BOOLEANO("Sim ou Não", "Boolean"),
-    RADIO("Uma Opção", "List<Opcao>"),
-    CHECK("Várias Opções", "List<Opcao>"),
+    RADIO("Uma Opção", "Map<String, Boolean>"),
+    CHECK("Várias Opções", "Map<String, Boolean>"),
     AVALIACAO("Avaliação 1-5", "Integer");
 
     private String nome;

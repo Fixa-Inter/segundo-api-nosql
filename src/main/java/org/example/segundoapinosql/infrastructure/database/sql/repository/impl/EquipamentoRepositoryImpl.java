@@ -1,6 +1,7 @@
 package org.example.segundoapinosql.infrastructure.database.sql.repository.impl;
 
 import java.util.Optional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.segundoapinosql.adapters.mapper.EquipamentoMapper;
 import org.example.segundoapinosql.domain.model.Equipamento;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 @RequiredArgsConstructor
 public class EquipamentoRepositoryImpl implements EquipamentoRepository {
+
     private final JpaEquipamentoRepository repository;
     private final EquipamentoMapper mapper;
 
