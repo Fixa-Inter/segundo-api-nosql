@@ -18,6 +18,11 @@ public class InspecaoChecklistRepositoryImpl implements InspecaoChecklistReposit
     private final InspecaoChecklistMapper mapper;
 
     @Override
+    public InspecaoChecklist save(InspecaoChecklist inspecaoChecklist) {
+        return mapper.toModel(mongoRepository.save(mapper.toDocument(inspecaoChecklist)));
+    }
+
+    @Override
     public Optional<InspecaoChecklist> findByEquipamentoId(Long equipamentoId) {
         Optional<InspecaoChecklistDocument> inspecaoChecklistDocument = Optional.ofNullable(
                 mongoRepository.findByEquipamentoId(equipamentoId)

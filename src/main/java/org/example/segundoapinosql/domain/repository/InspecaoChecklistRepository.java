@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface InspecaoChecklistRepository {
 
+    InspecaoChecklist save(InspecaoChecklist inspecaoChecklist);
+
     Optional<InspecaoChecklist> findByEquipamentoId(Long equipamentoId);
 
 }

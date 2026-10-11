@@ -2,7 +2,7 @@ package org.example.segundoapinosql.adapters.mapper;
 
 import org.example.segundoapinosql.domain.model.*;
 import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
-import org.example.segundoapinosql.domain.repository.InspecaoChecklistRepository;
+import org.example.segundoapinosql.domain.repository.StatusInspecaoEquipamentoRepository;
 import org.example.segundoapinosql.domain.repository.ModeloEquipamentoRepository;
 import org.example.segundoapinosql.adapters.dto.output.CampoOutputDTO;
 import org.example.segundoapinosql.adapters.dto.output.EquipamentoOutputDTO;
@@ -27,7 +27,7 @@ public abstract class ModeloChecklistMapper {
     protected EquipamentoRepository equipamentoRepository;
 
     @Autowired
-    protected InspecaoChecklistRepository inspecaoChecklistRepository;
+    protected StatusInspecaoEquipamentoRepository statusInspecaoRepository;
 
     public abstract ModeloChecklistDocument toDocument(ModeloChecklist model);
     public abstract ModeloChecklist toModel(ModeloChecklistDocument entity);
@@ -69,7 +69,7 @@ public abstract class ModeloChecklistMapper {
     }
 
     public EquipamentoOutputDTO toEquipamentoOutputDTO(org.example.segundoapinosql.domain.model.Equipamento equipamento) {
-        InspecaoChecklist inspecao = inspecaoChecklistRepository.findByEquipamentoId(equipamento.getId()).orElse(null);
+        StatusInspecaoEquipamento inspecao = statusInspecaoRepository.findByEquipamentoId(equipamento.getId()).orElse(null);
         return new EquipamentoOutputDTO(
                 equipamento.getId(), equipamento.getCodigo(),
                 inspecao == null ? null : inspecao.getPrazoInspecao(),

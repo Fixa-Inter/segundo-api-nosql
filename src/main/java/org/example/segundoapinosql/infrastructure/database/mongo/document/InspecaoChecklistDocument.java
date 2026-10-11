@@ -1,22 +1,26 @@
 package org.example.segundoapinosql.infrastructure.database.mongo.document;
 
-import org.example.segundoapinosql.domain.model.RegistroInspecaoChecklist;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
-import java.util.List;
 
-@Document(collection = "inpecoes_checklist")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(collection = "inspecoes_checklist")
 public class InspecaoChecklistDocument {
 
     @Id
     private String id;
 
-    private Long modeloEquipamentoChecklistId;
+    private String modeloChecklistId;
     private Long equipamentoId;
-    private LocalDate dataUltimaInspecao;
-    private LocalDate prazoInspecao;
-    private Boolean status;
-    private List<RegistroInspecaoChecklist> registros;
+    private LocalDate dataInspecao;
+    private java.util.Map<String, Object> dados;
 }
