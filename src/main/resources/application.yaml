@@ -5,6 +5,12 @@ spring:
   config:
     import: optional:file:.env[.properties]
 
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
   data:
     redis:
       host: ${REDIS_HOST}
@@ -18,7 +24,7 @@ spring:
     uri: ${MONGODB_URI}
 
   jpa:
-    database: mongodb
+    database: postgresql
     hibernate:
       ddl-auto: update
     open-in-view: false
@@ -33,5 +39,3 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  access-token-expiration: 3600000
-  refresh-token-expiration: 7776000000
