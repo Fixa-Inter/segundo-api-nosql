@@ -1,10 +1,6 @@
 package org.example.segundoapinosql.infrastructure.database.sql.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,15 +18,17 @@ public class UsuarioEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "unidade_id", nullable = false)
-    private Long unidadeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unidade_id")
+    private UnidadeEntity unidade;
 
-    @Column(name = "nome_completo", nullable = false)
+    @Column(name = "nome_completo")
     private String nomeCompleto;
 
-    @Column(name = "email", nullable = false, unique = true)
+    @Column(name = "email")
     private String email;
 
-    @Column(name = "tipo_acesso", nullable = false)
+    @jakarta.persistence.Convert(converter = org.example.segundoapinosql.domain.enums.converter.TipoAcessoConverter.class)
+    @Column(name = "tipo_acesso")
     private TipoAcesso tipoAcesso;
 }

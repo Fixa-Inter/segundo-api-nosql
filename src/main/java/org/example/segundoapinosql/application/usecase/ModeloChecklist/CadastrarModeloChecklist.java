@@ -96,7 +96,7 @@ public class CadastrarModeloChecklist {
         ModeloEquipamento modelo = modeloEquipamentoRepository.findById(dto.modeloEquipamentoId())
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.modeloEquipamento.notFound"));
 
-        validarUnidade(modelo.getUsuario(), usuario);
+        validarUnidade(modelo, usuario);
 
         List<Long> equipamentoIds = dto.equipamentos().stream()
                 .map(item -> {
@@ -108,7 +108,7 @@ public class CadastrarModeloChecklist {
                         throw new RegraProblemaException("exception.equipamento.modelo.invalid");
                     }
 
-                    validarUnidade(equipamento.getModeloEquipamento().getUsuario(), usuario);
+                    validarUnidade(equipamento.getUsuario(), usuario);
                     return equipamento.getId();
                 })
                 .toList();
@@ -120,6 +120,13 @@ public class CadastrarModeloChecklist {
         if (proprietario == null || !usuario.getUnidadeId().equals(proprietario.getUnidadeId())) {
             throw new RegraProblemaException("exception.unidade.required");
         }
+    }
+
+    private void validarUnidade(ModeloEquipamento modelo, Usuario usuario) {
+        if (modelo.getCategoriaEquipamento() == null) {
+            throw new RegraProblemaException("exception.unidade.required");
+        }
+        validarUnidade(modelo.getCategoriaEquipamento().getUsuario(), usuario);
     }
 
 }

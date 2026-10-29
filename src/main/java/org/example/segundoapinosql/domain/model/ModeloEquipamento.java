@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ModeloEquipamento {
     private Long id;
-    private Usuario usuario;
+    private CategoriaEquipamento categoriaEquipamento;
     private String nome;
 }

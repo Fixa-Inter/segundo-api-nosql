@@ -9,6 +9,7 @@ import org.example.segundoapinosql.domain.repository.InspecaoChecklistRepository
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.StatusInspecaoEquipamentoRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
+import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
 import org.example.segundoapinosql.infrastructure.exception.RegraProblemaException;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class CadastrarInspecaoChecklist {
     private final ModeloChecklistRepository modeloChecklistRepository;
     private final StatusInspecaoEquipamentoRepository statusInspecaoEquipamentoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final EquipamentoRepository equipamentoRepository;
 
     public InspecaoChecklist cadastrar(
             InspecaoChecklistCadastrarInputDTO dto,
@@ -49,6 +51,19 @@ public class CadastrarInspecaoChecklist {
 
         if (!equipamentoSelecionado)
             throw new RegraProblemaException("exception.equipamento.notInChecklist");
+
+        var equipamento = equipamentoRepository.findById(dto.equipamentoId())
+                .orElseThrow(() -> new EntityNotFoundException("exception.equipamento.notFound"));
+        if (equipamento.getUsuario() == null
+                || !Objects.equals(equipamento.getUsuario().getUnidadeId(), usuario.getUnidadeId())) {
+            throw new RegraProblemaException("exception.unidade.required");
+        }
+        boolean modeloConfere = modeloChecklist.getModelos().stream()
+                .filter(link -> link.getEquipamentoIds() != null && link.getEquipamentoIds().contains(dto.equipamentoId()))
+                .anyMatch(link -> equipamento.getModeloEquipamento() != null
+                        && Objects.equals(link.getModeloEquipamentoId(), equipamento.getModeloEquipamento().getId()));
+
+        if (!modeloConfere) throw new RegraProblemaException("exception.equipamento.modelo.invalid");
 
         validarDados(dto.dados(), modeloChecklist.getCampos());
 

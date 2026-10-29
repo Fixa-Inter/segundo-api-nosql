@@ -9,6 +9,8 @@ import org.example.segundoapinosql.domain.model.Usuario;
 import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
+import org.example.segundoapinosql.domain.repository.ModeloEquipamentoRepository;
+import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
 import org.example.segundoapinosql.infrastructure.exception.EntidadeNaoEncontradaException;
 import org.example.segundoapinosql.infrastructure.exception.RegraProblemaException;
 
@@ -20,6 +22,8 @@ public class ListarModelosEquipamento {
 
     private final ModeloChecklistRepository modeloChecklistRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ModeloEquipamentoRepository modeloEquipamentoRepository;
+    private final EquipamentoRepository equipamentoRepository;
 
     public List<ModeloEquipamentoChecklist> listar(String modeloChecklistId, Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
@@ -36,6 +40,28 @@ public class ListarModelosEquipamento {
         if (modelosEquipamento == null || modelosEquipamento.isEmpty())
             throw new org.example.segundoapinosql.infrastructure.exception.EntidadeNaoEncontradaException("exception.modeloEquipamento.notFound");
 
-        return modelosEquipamento;
+        return modelosEquipamento.stream()
+                .map(link -> modeloEquipamentoRepository.findById(link.getModeloEquipamentoId())
+                        .map(modeloEquipamento -> {
+                            var categoria = modeloEquipamento.getCategoriaEquipamento();
+                            var proprietario = categoria == null ? null : categoria.getUsuario();
+                            if (proprietario == null
+                                    || !java.util.Objects.equals(proprietario.getUnidadeId(), usuario.getUnidadeId())) {
+                                return null;
+                            }
+                            List<Long> equipamentosValidos = link.getEquipamentoIds() == null ? List.of()
+                                    : link.getEquipamentoIds().stream()
+                                    .map(equipamentoRepository::findById)
+                                    .flatMap(java.util.Optional::stream)
+                                    .filter(equipamento -> equipamento.getUsuario() != null
+                                            && java.util.Objects.equals(equipamento.getUsuario().getUnidadeId(), usuario.getUnidadeId()))
+                                    .filter(equipamento -> equipamento.getModeloEquipamento() != null
+                                            && java.util.Objects.equals(equipamento.getModeloEquipamento().getId(), modeloEquipamento.getId()))
+                                    .map(org.example.segundoapinosql.domain.model.Equipamento::getId)
+                                    .toList();
+                            return new ModeloEquipamentoChecklist(modeloEquipamento.getId(), equipamentosValidos);
+                        }).orElse(null))
+                .filter(java.util.Objects::nonNull)
+                .toList();
     }
 }
