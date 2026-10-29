@@ -35,8 +35,8 @@ public class CadastrarInspecaoChecklist {
         ModeloChecklist modeloChecklist = modeloChecklistRepository.findById(dto.modeloChecklistId())
                 .orElseThrow(() -> new EntityNotFoundException("exception.modeloChecklist.notFound"));
 
-        if (!Objects.equals(modeloChecklist.getEnderecoId(), usuario.getEnderecoId()))
-            throw new RegraProblemaException("exception.endereco.required");
+        if (!Objects.equals(modeloChecklist.getUnidadeId(), usuario.getUnidadeId()))
+            throw new RegraProblemaException("exception.unidade.required");
 
         boolean equipamentoSelecionado =
                 modeloChecklist.getModelos() != null

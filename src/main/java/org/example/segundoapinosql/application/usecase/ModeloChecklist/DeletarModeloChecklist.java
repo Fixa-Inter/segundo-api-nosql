@@ -23,7 +23,7 @@ public class DeletarModeloChecklist {
         ModeloChecklist modeloChecklist = modeloChecklistRepository.findById(modeloChecklistId)
                 .orElseThrow(() -> new EntityNotFoundException("exception.modeloChecklist.notFound"));
 
-        if (!usuario.getEnderecoId().equals(modeloChecklist.getEnderecoId())) {
+        if (!usuario.getUnidadeId().equals(modeloChecklist.getUnidadeId())) {
             throw new RegraProblemaException("exception.access.denied");
         }
 

@@ -23,7 +23,7 @@ public class ModeloChecklistDocument {
     private String id;
 
     private Long usuarioId;
-    private Long enderecoId;
+    private Long unidadeId;
     private String nome;
     private Integer periodicidade;
     private List<Campo> campos;

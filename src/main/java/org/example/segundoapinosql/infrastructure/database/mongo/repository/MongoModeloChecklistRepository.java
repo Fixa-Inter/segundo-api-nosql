@@ -6,5 +6,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface MongoModeloChecklistRepository extends MongoRepository<ModeloChecklistDocument, String> {
-    List<ModeloChecklistDocument> findAllByEnderecoId(Long enderecoId);
+    List<ModeloChecklistDocument> findAllByUnidadeId(Long unidadeId);
 }

@@ -35,7 +35,7 @@ public class CadastrarModeloChecklist {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.usuario.required"));
 
-        validarNomeChecklistDisponivel(dto.nome(), usuario.getEnderecoId());
+        validarNomeChecklistDisponivel(dto.nome(), usuario.getUnidadeId());
 
         List<Campo> campos = dto.campos().stream()
                 .map(campo -> new Campo(
@@ -64,7 +64,7 @@ public class CadastrarModeloChecklist {
         ModeloChecklist modeloChecklist = new ModeloChecklist(
                 null,
                 usuarioId,
-                usuario.getEnderecoId(),
+                usuario.getUnidadeId(),
                 dto.nome(),
                 dto.periodicidade(),
                 campos,
@@ -76,8 +76,8 @@ public class CadastrarModeloChecklist {
         return modeloChecklistRepository.save(modeloChecklist);
     }
 
-    private void validarNomeChecklistDisponivel(String nome, Long enderecoId) {
-        boolean duplicado = modeloChecklistRepository.findAll(enderecoId).stream()
+    private void validarNomeChecklistDisponivel(String nome, Long unidadeId) {
+        boolean duplicado = modeloChecklistRepository.findAll(unidadeId).stream()
                 .anyMatch(modelo -> normalizar(modelo.getNome()).equals(normalizar(nome)));
 
         if (duplicado) {
@@ -96,7 +96,7 @@ public class CadastrarModeloChecklist {
         ModeloEquipamento modelo = modeloEquipamentoRepository.findById(dto.modeloEquipamentoId())
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.modeloEquipamento.notFound"));
 
-        validarEndereco(modelo.getUsuario(), usuario);
+        validarUnidade(modelo.getUsuario(), usuario);
 
         List<Long> equipamentoIds = dto.equipamentos().stream()
                 .map(item -> {
@@ -108,7 +108,7 @@ public class CadastrarModeloChecklist {
                         throw new RegraProblemaException("exception.equipamento.modelo.invalid");
                     }
 
-                    validarEndereco(equipamento.getModeloEquipamento().getUsuario(), usuario);
+                    validarUnidade(equipamento.getModeloEquipamento().getUsuario(), usuario);
                     return equipamento.getId();
                 })
                 .toList();
@@ -116,9 +116,9 @@ public class CadastrarModeloChecklist {
         return new ModeloEquipamentoChecklist(modelo.getId(), equipamentoIds);
     }
 
-    private void validarEndereco(Usuario proprietario, Usuario usuario) {
-        if (proprietario == null || !usuario.getEnderecoId().equals(proprietario.getEnderecoId())) {
-            throw new RegraProblemaException("exception.endereco.required");
+    private void validarUnidade(Usuario proprietario, Usuario usuario) {
+        if (proprietario == null || !usuario.getUnidadeId().equals(proprietario.getUnidadeId())) {
+            throw new RegraProblemaException("exception.unidade.required");
         }
     }
 
