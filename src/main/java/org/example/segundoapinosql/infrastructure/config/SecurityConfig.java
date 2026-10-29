@@ -53,8 +53,14 @@ public class SecurityConfig{
                                 "/v3/api-docs/**"
                         ).permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/api/v1/modelo-checklist/listar")
+                        .hasAnyRole("ADMINISTRADOR", "GESTOR", "TECNICO")
+
+                        .requestMatchers("/api/v1/inspecao-checklist/**")
+                        .hasAnyRole("ADMINISTRADOR", "GESTOR", "TECNICO")
+
                         .requestMatchers("/api/v1/**")
-                        .hasRole("GESTOR")
+                        .hasAnyRole("ADMINISTRADOR", "GESTOR")
 
                         .anyRequest().authenticated()
 

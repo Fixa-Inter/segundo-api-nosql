@@ -28,7 +28,7 @@ public class ModeloChecklistRepositoryImpl implements ModeloChecklistRepository 
 
     @Override
     public List<ModeloChecklist> findAll(Long usuarioId) {
-        return mongoRepository.findAllByEnderecoId(usuarioId)
+        return mongoRepository.findAllByUnidadeId(usuarioId)
                 .stream()
                 .map(mapper::toModel)
                 .toList();

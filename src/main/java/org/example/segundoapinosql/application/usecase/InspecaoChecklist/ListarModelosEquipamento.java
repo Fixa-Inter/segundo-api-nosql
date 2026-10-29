@@ -28,8 +28,8 @@ public class ListarModelosEquipamento {
         ModeloChecklist modelo = modeloChecklistRepository.findById(modeloChecklistId)
                 .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.modeloChecklist.notFound"));
 
-        if (modelo.getEnderecoId() == null || !usuario.getEnderecoId().equals(modelo.getEnderecoId()))
-            throw new RegraProblemaException("exception.endereco.required");
+        if (modelo.getUnidadeId() == null || !usuario.getUnidadeId().equals(modelo.getUnidadeId()))
+            throw new RegraProblemaException("exception.unidade.required");
 
         List<ModeloEquipamentoChecklist> modelosEquipamento = modelo.getModelos();
 

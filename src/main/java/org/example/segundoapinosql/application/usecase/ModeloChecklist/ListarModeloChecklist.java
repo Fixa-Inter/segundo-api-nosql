@@ -22,7 +22,7 @@ public class ListarModeloChecklist {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new EntityNotFoundException("exception.usuario.required"));
 
-        List<ModeloChecklist> modelos = modeloChecklistRepository.findAll(usuario.getEnderecoId());
+        List<ModeloChecklist> modelos = modeloChecklistRepository.findAll(usuario.getUnidadeId());
         if (modelos.isEmpty()) throw new EntidadeNaoEncontradaException("exception.modeloChecklist.notFound");
 
         return modelos;

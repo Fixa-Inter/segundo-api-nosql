@@ -12,7 +12,7 @@ import org.example.segundoapinosql.domain.enums.TipoAcesso;
 @AllArgsConstructor
 public class Usuario {
     private Long id;
-    private Long enderecoId;
+    private Long unidadeId;
     private String nomeCompleto;
     private String email;
     private TipoAcesso tipoAcesso;

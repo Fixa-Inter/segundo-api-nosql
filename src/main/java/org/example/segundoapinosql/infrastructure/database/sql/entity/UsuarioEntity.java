@@ -22,8 +22,8 @@ public class UsuarioEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "endereco_id", nullable = false)
-    private Long enderecoId;
+    @Column(name = "unidade_id", nullable = false)
+    private Long unidadeId;
 
     @Column(name = "nome_completo", nullable = false)
     private String nomeCompleto;

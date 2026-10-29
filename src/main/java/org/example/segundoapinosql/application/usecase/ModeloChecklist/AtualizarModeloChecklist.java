@@ -45,14 +45,14 @@ public class AtualizarModeloChecklist {
         ModeloChecklist modeloChecklist = modeloChecklistRepository.findById(dto.id())
                 .orElseThrow(() -> new EntityNotFoundException("exception.modeloChecklist.notFound"));
 
-        if (!usuario.getEnderecoId().equals(modeloChecklist.getEnderecoId())) {
+        if (!usuario.getUnidadeId().equals(modeloChecklist.getUnidadeId())) {
             throw new RegraProblemaException("exception.access.denied");
         }
 
         if (dto.nome() != null) {
             validarNomeChecklistDisponivel(
                     dto.nome(),
-                    modeloChecklist.getEnderecoId(),
+                    modeloChecklist.getUnidadeId(),
                     modeloChecklist.getId()
             );
             modeloChecklist.setNome(dto.nome());
@@ -65,7 +65,7 @@ public class AtualizarModeloChecklist {
             modeloChecklist.setModelos(validarEConstruirModelos(dto.modelos(), usuario));
         }
 
-        if (dto.campos() != null && !dto.campos().isEmpty()) modeloChecklist.setCampos(atualizarCampos(
+        if (dto.campos() != null) modeloChecklist.setCampos(atualizarCampos(
                 dto.campos(),
                 modeloChecklist.getCampos()
         ));
@@ -75,10 +75,10 @@ public class AtualizarModeloChecklist {
 
     private void validarNomeChecklistDisponivel(
             String nome,
-            Long enderecoId,
+            Long unidadeId,
             String idAtual
     ) {
-        boolean duplicado = modeloChecklistRepository.findAll(enderecoId).stream()
+        boolean duplicado = modeloChecklistRepository.findAll(unidadeId).stream()
                 .anyMatch(modelo -> !Objects.equals(modelo.getId(), idAtual)
                         && normalizar(modelo.getNome()).equals(normalizar(nome)));
 
@@ -99,7 +99,7 @@ public class AtualizarModeloChecklist {
                                     "exception.modeloEquipamento.notFound"
                             ));
 
-                    validarEndereco(modelo.getUsuario(), usuario);
+                    validarUnidade(modelo.getUsuario(), usuario);
 
                     List<Long> equipamentoIds = modeloDto.equipamentos() == null
                             ? List.of()
@@ -119,7 +119,7 @@ public class AtualizarModeloChecklist {
                                     );
                                 }
 
-                                validarEndereco(
+                                validarUnidade(
                                         equipamento.getModeloEquipamento().getUsuario(),
                                         usuario
                                 );
@@ -135,10 +135,10 @@ public class AtualizarModeloChecklist {
                 .toList();
     }
 
-    private void validarEndereco(Usuario proprietario, Usuario usuario) {
+    private void validarUnidade(Usuario proprietario, Usuario usuario) {
         if (proprietario == null
-                || !usuario.getEnderecoId().equals(proprietario.getEnderecoId())) {
-            throw new RegraProblemaException("exception.endereco.required");
+                || !usuario.getUnidadeId().equals(proprietario.getUnidadeId())) {
+            throw new RegraProblemaException("exception.unidade.required");
         }
     }
 
@@ -146,10 +146,11 @@ public class AtualizarModeloChecklist {
             List<CampoAtualizarInputDTO> dtoCampos,
             List<Campo> campos
     ) {
-        List<Campo> camposAtualizados = new ArrayList<>(campos);
+        List<Campo> camposAtuais = campos == null ? Collections.emptyList() : campos;
+        List<Campo> camposAtualizados = new ArrayList<>();
 
         for (CampoAtualizarInputDTO dtoCampo : dtoCampos) {
-            Campo campoExistente = camposAtualizados.stream()
+            Campo campoExistente = camposAtuais.stream()
                     .filter(campo -> Objects.equals(campo.getId(), dtoCampo.id()))
                     .findFirst()
                     .orElse(null);
@@ -182,6 +183,7 @@ public class AtualizarModeloChecklist {
                                 : campoExistente.getOpcoes()
                 ));
             }
+            camposAtualizados.add(campoExistente);
         }
 
         return camposAtualizados;
@@ -191,14 +193,15 @@ public class AtualizarModeloChecklist {
             List<OpcaoAtualizarInputDTO> dtoOpcoes,
             List<Opcao> opcoes
     ) {
-        List<Opcao> opcoesAtualizadas = new ArrayList<>(opcoes);
+        List<Opcao> opcoesAtuais = opcoes == null ? Collections.emptyList() : opcoes;
+        List<Opcao> opcoesAtualizadas = new ArrayList<>();
 
         if (dtoOpcoes == null) {
             return opcoesAtualizadas;
         }
 
         for (OpcaoAtualizarInputDTO dtoOpcao : dtoOpcoes) {
-            Opcao opcaoExistente = opcoesAtualizadas.stream()
+            Opcao opcaoExistente = opcoesAtuais.stream()
                     .filter(opcao -> Objects.equals(opcao.getId(), dtoOpcao.id()))
                     .findFirst()
                     .orElse(null);
@@ -219,6 +222,7 @@ public class AtualizarModeloChecklist {
 
             if (dtoOpcao.nome() != null) opcaoExistente.setNome(dtoOpcao.nome());
             if (dtoOpcao.obrigatorio() != null) opcaoExistente.setObrigatorio(dtoOpcao.obrigatorio());
+            opcoesAtualizadas.add(opcaoExistente);
         }
 
         return opcoesAtualizadas;
