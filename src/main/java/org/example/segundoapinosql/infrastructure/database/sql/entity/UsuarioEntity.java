@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.segundoapinosql.domain.enums.TipoAcesso;
+import org.example.segundoapinosql.domain.enums.converter.TipoAcessoConverter;
 
 @Entity(name = "Usuario")
 @Getter
@@ -28,7 +29,7 @@ public class UsuarioEntity {
     @Column(name = "email")
     private String email;
 
-    @jakarta.persistence.Convert(converter = org.example.segundoapinosql.domain.enums.converter.TipoAcessoConverter.class)
+    @jakarta.persistence.Convert(converter = TipoAcessoConverter.class)
     @Column(name = "tipo_acesso")
     private TipoAcesso tipoAcesso;
 }

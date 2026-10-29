@@ -62,6 +62,7 @@ public class SecurityConfig{
                         .requestMatchers("/api/v1/**")
                         .hasAnyRole("ADMINISTRADOR", "GESTOR")
 
+                        .requestMatchers("/actuator/health").permitAll()
                         .anyRequest().authenticated()
 
                 )
