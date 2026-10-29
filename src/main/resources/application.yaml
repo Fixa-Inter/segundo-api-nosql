@@ -41,6 +41,11 @@ jwt:
   secret: ${JWT_SECRET}
 
 management:
+  health:
+      mail:
+        enabled: false
+      redis:
+        enabled: false
   endpoints:
     web:
       exposure:
