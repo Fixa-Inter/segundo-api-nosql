@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.segundoapinosql.application.annotation.UseCase;
 import org.example.segundoapinosql.domain.model.*;
 import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
+import org.example.segundoapinosql.domain.repository.ModeloEquipamentoRepository;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
 import org.example.segundoapinosql.infrastructure.exception.EntidadeNaoEncontradaException;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class ListarEquipamentos {
 
     private final EquipamentoRepository equipamentoRepository;
+    private final ModeloEquipamentoRepository modeloEquipamentoRepository;
     private final ModeloChecklistRepository modeloChecklistRepository;
     private final UsuarioRepository usuarioRepository;
 
@@ -44,6 +46,10 @@ public class ListarEquipamentos {
             throw new EntidadeNaoEncontradaException("exception.modeloEquipamento.notFound");
         }
 
+        var modeloEquipamento = modeloEquipamentoRepository.findById(modeloEquipamentoId)
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.modeloEquipamento.notFound"));
+        validarUnidadeModelo(modeloEquipamento, usuario);
+
         List<Long> equipamentoIds = modeloEquipamentoChecklist.get().getEquipamentoIds() == null
                 ? List.of()
                 : modeloEquipamentoChecklist.get().getEquipamentoIds();
@@ -52,6 +58,18 @@ public class ListarEquipamentos {
                 .map(equipamentoId -> equipamentoRepository.findById(equipamentoId)
                         .orElseThrow(() -> new EntidadeNaoEncontradaException(
                                 "exception.equipamento.notFound")))
+                .filter(equipamento -> equipamento.getUsuario() != null
+                        && Objects.equals(equipamento.getUsuario().getUnidadeId(), usuario.getUnidadeId()))
+                .filter(equipamento -> equipamento.getModeloEquipamento() != null
+                        && Objects.equals(equipamento.getModeloEquipamento().getId(), modeloEquipamentoId))
                 .toList();
+    }
+
+    private void validarUnidadeModelo(org.example.segundoapinosql.domain.model.ModeloEquipamento modelo, Usuario usuario) {
+        var categoria = modelo.getCategoriaEquipamento();
+        var proprietario = categoria == null ? null : categoria.getUsuario();
+        if (proprietario == null || !Objects.equals(proprietario.getUnidadeId(), usuario.getUnidadeId())) {
+            throw new RegraProblemaException("exception.unidade.required");
+        }
     }
 }

@@ -99,7 +99,7 @@ public class AtualizarModeloChecklist {
                                     "exception.modeloEquipamento.notFound"
                             ));
 
-                    validarUnidade(modelo.getUsuario(), usuario);
+                    validarUnidade(modelo, usuario);
 
                     List<Long> equipamentoIds = modeloDto.equipamentos() == null
                             ? List.of()
@@ -119,10 +119,7 @@ public class AtualizarModeloChecklist {
                                     );
                                 }
 
-                                validarUnidade(
-                                        equipamento.getModeloEquipamento().getUsuario(),
-                                        usuario
-                                );
+                                validarUnidade(equipamento.getUsuario(), usuario);
                                 return equipamento.getId();
                             })
                             .toList();
@@ -140,6 +137,13 @@ public class AtualizarModeloChecklist {
                 || !usuario.getUnidadeId().equals(proprietario.getUnidadeId())) {
             throw new RegraProblemaException("exception.unidade.required");
         }
+    }
+
+    private void validarUnidade(ModeloEquipamento modelo, Usuario usuario) {
+        if (modelo.getCategoriaEquipamento() == null) {
+            throw new RegraProblemaException("exception.unidade.required");
+        }
+        validarUnidade(modelo.getCategoriaEquipamento().getUsuario(), usuario);
     }
 
     private List<Campo> atualizarCampos(
