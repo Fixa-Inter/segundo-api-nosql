@@ -6,6 +6,4 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface JpaEquipamentoRepository extends JpaRepository<EquipamentoEntity, Long> {
-    List<EquipamentoEntity> findAllByModeloEquipamentoId(Long modeloEquipamentoId);
-}
+public interface JpaEquipamentoRepository extends JpaRepository<EquipamentoEntity, Long> { }

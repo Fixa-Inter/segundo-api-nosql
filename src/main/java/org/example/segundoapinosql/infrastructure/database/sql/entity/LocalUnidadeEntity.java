@@ -6,7 +6,8 @@ import lombok.*;
 @Entity(name = "LocalUnidade")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class LocalUnidadeEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 }

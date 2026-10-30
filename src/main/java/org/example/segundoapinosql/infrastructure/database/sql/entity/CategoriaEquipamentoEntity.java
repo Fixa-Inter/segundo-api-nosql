@@ -10,7 +10,7 @@ public class CategoriaEquipamentoEntity {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "usuario_id")
     private UsuarioEntity usuario;
 }
