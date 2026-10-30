@@ -19,5 +19,4 @@ public class StatusInspecaoEquipamentoDocument {
     private String modeloChecklistId;
     private LocalDate dataUltimaInspecao;
     private LocalDate prazoInspecao;
-    private Boolean status;
 }

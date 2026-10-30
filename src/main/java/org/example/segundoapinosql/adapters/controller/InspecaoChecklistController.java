@@ -3,14 +3,12 @@ package org.example.segundoapinosql.adapters.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.segundoapinosql.adapters.controller.contract.InspecaoChecklistControllerContract;
 import org.example.segundoapinosql.adapters.dto.input.InspecionarChecklist.InspecaoChecklistCadastrarInputDTO;
-import org.example.segundoapinosql.adapters.dto.output.EquipamentoOutputDTO;
 import org.example.segundoapinosql.adapters.dto.output.InspecaoChecklistOutputDTO;
 import org.example.segundoapinosql.adapters.dto.output.ModeloEquipamentoOutputDTO;
 import org.example.segundoapinosql.adapters.mapper.ModeloChecklistMapper;
 import org.example.segundoapinosql.adapters.mapper.InspecaoChecklistOutputMapper;
 import org.example.segundoapinosql.adapters.utils.ControllerUtils;
 import org.example.segundoapinosql.application.usecase.InspecaoChecklist.CadastrarInspecaoChecklist;
-import org.example.segundoapinosql.application.usecase.InspecaoChecklist.ListarEquipamentos;
 import org.example.segundoapinosql.application.usecase.InspecaoChecklist.ListarModelosEquipamento;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +24,6 @@ public class InspecaoChecklistController implements InspecaoChecklistControllerC
 
     // UseCases
     private final ListarModelosEquipamento listarModelosEquipamento;
-    private final ListarEquipamentos listarEquipamentos;
     private final CadastrarInspecaoChecklist cadastrarInspecaoChecklist;
 
     // Mapper
@@ -44,18 +41,6 @@ public class InspecaoChecklistController implements InspecaoChecklistControllerC
                 listarModelosEquipamento.listar(modeloChecklistId, ControllerUtils.usuarioId(authentication))
                 .stream().map(mapper::toOutputDTO).toList()
         );
-    }
-
-    @Override
-    @GetMapping("/modelos/{modeloChecklistId}/{modeloEquipamentoId}/equipamentos")
-    public ResponseEntity<List<EquipamentoOutputDTO>> listarEquipamentos(
-            @PathVariable String modeloChecklistId,
-            @PathVariable Long modeloEquipamentoId,
-            Authentication authentication
-    ) {
-        return ResponseEntity.ok(
-                listarEquipamentos.listar(modeloChecklistId, modeloEquipamentoId, ControllerUtils.usuarioId(authentication))
-                .stream().map(mapper::toEquipamentoOutputDTO).toList());
     }
 
     //POST

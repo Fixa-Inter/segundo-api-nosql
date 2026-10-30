@@ -42,7 +42,8 @@ public class CadastrarInspecaoChecklist {
 
         boolean equipamentoSelecionado =
                 modeloChecklist.getModelos() != null
-                && modeloChecklist.getModelos()
+                && modeloChecklist
+                        .getModelos()
                         .stream()
                         .anyMatch(modelo ->
                                 modelo.getEquipamentoIds() != null
@@ -52,13 +53,17 @@ public class CadastrarInspecaoChecklist {
         if (!equipamentoSelecionado)
             throw new RegraProblemaException("exception.equipamento.notInChecklist");
 
-        var equipamento = equipamentoRepository.findById(dto.equipamentoId())
+        Equipamento equipamento = equipamentoRepository.findById(dto.equipamentoId())
                 .orElseThrow(() -> new EntityNotFoundException("exception.equipamento.notFound"));
+
         if (equipamento.getUsuario() == null
                 || !Objects.equals(equipamento.getUsuario().getUnidadeId(), usuario.getUnidadeId())) {
             throw new RegraProblemaException("exception.unidade.required");
         }
-        boolean modeloConfere = modeloChecklist.getModelos().stream()
+
+        boolean modeloConfere = modeloChecklist
+                .getModelos()
+                .stream()
                 .filter(link -> link.getEquipamentoIds() != null && link.getEquipamentoIds().contains(dto.equipamentoId()))
                 .anyMatch(link -> equipamento.getModeloEquipamento() != null
                         && Objects.equals(link.getModeloEquipamentoId(), equipamento.getModeloEquipamento().getId()));
@@ -78,15 +83,24 @@ public class CadastrarInspecaoChecklist {
         StatusInspecaoEquipamento statusInspecaoEquipamento = statusInspecaoEquipamentoRepository
                 .findByEquipamentoId(dto.equipamentoId()).orElseGet(StatusInspecaoEquipamento::new);
 
-        if (Boolean.TRUE.equals(statusInspecaoEquipamento.getStatus())) {
+        LocalDate dataAtual = LocalDate.now();
+        LocalDate ultimaAtualizacao = statusInspecaoEquipamento.getDataUltimaInspecao();
+        LocalDate prazoInspecao = statusInspecaoEquipamento.getPrazoInspecao();
+
+        boolean inspecaoJaConcluidaNoPeriodo =
+                ultimaAtualizacao != null
+                && prazoInspecao != null
+                && !ultimaAtualizacao.isAfter(prazoInspecao)
+                && !dataAtual.isAfter(prazoInspecao);
+
+        if (inspecaoJaConcluidaNoPeriodo) {
             throw new RegraProblemaException("exception.inspecao.alreadyCompleted");
         }
 
         statusInspecaoEquipamento.setEquipamentoId(dto.equipamentoId());
         statusInspecaoEquipamento.setModeloChecklistId(dto.modeloChecklistId());
-        statusInspecaoEquipamento.setDataUltimaInspecao(LocalDate.now());
-        statusInspecaoEquipamento.setPrazoInspecao(LocalDate.now().plusDays(modeloChecklist.getPeriodicidade()));
-        statusInspecaoEquipamento.setStatus(true);
+        statusInspecaoEquipamento.setDataUltimaInspecao(dataAtual);
+        statusInspecaoEquipamento.setPrazoInspecao(dataAtual.plusDays(modeloChecklist.getPeriodicidade()));
 
         inspecaoChecklistRepository.save(inspecaoChecklist);
         statusInspecaoEquipamentoRepository.save(statusInspecaoEquipamento);
