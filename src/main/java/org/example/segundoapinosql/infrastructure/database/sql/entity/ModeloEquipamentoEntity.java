@@ -16,11 +16,11 @@ public class ModeloEquipamentoEntity {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "marca_equipamento_id")
     private MarcaEquipamentoEntity marcaEquipamento;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "categoria_equipamento_id")
     private CategoriaEquipamentoEntity categoriaEquipamento;
 

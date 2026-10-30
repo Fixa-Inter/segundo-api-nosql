@@ -3,6 +3,8 @@ package org.example.segundoapinosql.infrastructure.database.sql.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity(name = "Equipamento")
 @Getter
 @Setter
@@ -12,15 +14,15 @@ public class EquipamentoEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "usuario_id")
     private UsuarioEntity usuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "modelo_equipamento_id")
     private ModeloEquipamentoEntity modeloEquipamento;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "local_unidade_id")
     private LocalUnidadeEntity localUnidade;
 
@@ -28,7 +30,7 @@ public class EquipamentoEntity {
     private String codigo;
 
     @Column(name = "data_criacao")
-    private java.time.LocalDateTime dataCriacao;
+    private LocalDateTime dataCriacao;
 
     @Column(name = "esta_ativo")
     private Boolean estaAtivo;

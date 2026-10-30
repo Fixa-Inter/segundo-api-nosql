@@ -19,6 +19,9 @@ public class EquipamentoRepositoryImpl implements EquipamentoRepository {
 
     @Override
     public Optional<Equipamento> findById(Long id) {
-        return repository.findById(id).map(mapper::toModel);
+
+        return repository
+                .findById(id)
+                .map(mapper::toModel);
     }
 }
