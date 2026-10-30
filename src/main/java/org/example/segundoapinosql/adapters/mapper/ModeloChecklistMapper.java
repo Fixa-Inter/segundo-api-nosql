@@ -14,6 +14,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,12 +69,20 @@ public abstract class ModeloChecklistMapper {
         );
     }
 
-    public EquipamentoOutputDTO toEquipamentoOutputDTO(org.example.segundoapinosql.domain.model.Equipamento equipamento) {
+    public EquipamentoOutputDTO toEquipamentoOutputDTO(Equipamento equipamento) {
         StatusInspecaoEquipamento inspecao = statusInspecaoRepository.findByEquipamentoId(equipamento.getId()).orElse(null);
+        LocalDate dataAtual = java.time.LocalDate.now();
+        boolean realizada = inspecao != null
+                && inspecao.getDataUltimaInspecao() != null
+                && inspecao.getPrazoInspecao() != null
+                && !inspecao.getDataUltimaInspecao().isAfter(inspecao.getPrazoInspecao())
+                && !dataAtual.isAfter(inspecao.getPrazoInspecao());
+
         return new EquipamentoOutputDTO(
-                equipamento.getId(), equipamento.getCodigo(),
+                equipamento.getId(),
+                equipamento.getCodigo(),
                 inspecao == null ? null : inspecao.getPrazoInspecao(),
-                inspecao != null && Boolean.TRUE.equals(inspecao.getStatus())
+                realizada
         );
     }
 
