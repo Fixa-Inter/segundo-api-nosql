@@ -35,6 +35,13 @@ public class ModeloChecklistRepositoryImpl implements ModeloChecklistRepository 
     }
 
     @Override
+    public List<ModeloChecklist> findAll() {
+        return mongoRepository.findAll().stream()
+                .map(mapper::toModel)
+                .toList();
+    }
+
+    @Override
     public Optional<ModeloChecklist> findById(String modeloChecklistId) {
         return mongoRepository
                 .findById(modeloChecklistId)

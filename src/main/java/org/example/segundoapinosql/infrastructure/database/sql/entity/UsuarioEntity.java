@@ -32,4 +32,7 @@ public class UsuarioEntity {
     @jakarta.persistence.Convert(converter = TipoAcessoConverter.class)
     @Column(name = "tipo_acesso")
     private TipoAcesso tipoAcesso;
+
+    @Column(name = "esta_ativo")
+    private Boolean estaAtivo;
 }

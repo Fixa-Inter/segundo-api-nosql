@@ -40,12 +40,24 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
 
+firebase:
+  project-id: ${FIREBASE_PROJECT_ID:fixa-fead2}
+  credentials-path: ${FIREBASE_CREDENTIALS_PATH:}
+  credentials-json: ${FIREBASE_CREDENTIALS_JSON:}
+
+app:
+  jobs:
+    checklist-pendencias:
+      primeiro-cron: ${JOB_CHECKLIST_PENDENCIAS_PRIMEIRO_CRON:0 0 10 * * *}
+      segundo-cron: ${JOB_CHECKLIST_PENDENCIAS_SEGUNDO_CRON:0 0 16 * * *}
+
 management:
   health:
       mail:
         enabled: false
       redis:
         enabled: false
+
   endpoints:
     web:
       exposure:
