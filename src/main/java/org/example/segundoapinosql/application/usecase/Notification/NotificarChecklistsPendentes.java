@@ -52,18 +52,18 @@ public class NotificarChecklistsPendentes {
 
             if (destinatarios.isEmpty()) continue;
 
-            Set<String> tokens = new HashSet<>();
-            destinatarios.forEach(usuarioId -> tokens.addAll(tokenRepository.listarPorUsuario(usuarioId)));
-            if (tokens.isEmpty()) continue;
-
             String mensagem = "O modelo de checklist \"" + modelo.getNome()
                     + "\" possui equipamentos pendentes de inspeção.";
+
+            Set<String> tokens = new HashSet<>();
+            destinatarios.forEach(usuarioId -> tokens.addAll(tokenRepository.listarPorUsuario(usuarioId)));
 
             pushRepository.enviar(tokens, new PushNotification(
                     "Checklist pendente",
                     mensagem,
                     TIPO_NOTIFICACAO_CHECKLIST,
-                    modelo.getId()
+                    modelo.getId(),
+                    new HashSet<>(destinatarios)
             ));
 
             modelosNotificados++;

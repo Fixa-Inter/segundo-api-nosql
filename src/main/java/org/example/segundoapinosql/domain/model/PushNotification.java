@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,4 +16,5 @@ public class PushNotification {
     private String message;
     private int tipoNotificacao;
     private String referenciaId;
+    private Set<Long> usuariosDestinatarios;
 }
