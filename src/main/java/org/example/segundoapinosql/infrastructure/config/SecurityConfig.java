@@ -21,7 +21,10 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @Configuration
 @AllArgsConstructor
 @EnableMethodSecurity
-@EnableConfigurationProperties(org.example.segundoapinosql.infrastructure.config.JwtProperties.class)
+@EnableConfigurationProperties({
+        org.example.segundoapinosql.infrastructure.config.JwtProperties.class,
+        org.example.segundoapinosql.infrastructure.config.FirebaseProperties.class
+})
 public class SecurityConfig{
 
     private final CustomAcessDeniedHandler customAcessDeniedHandler;

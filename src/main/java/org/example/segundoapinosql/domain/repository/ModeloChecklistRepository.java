@@ -11,6 +11,8 @@ public interface ModeloChecklistRepository {
 
     List<ModeloChecklist> findAll(Long usuarioId);
 
+    List<ModeloChecklist> findAll();
+
     Optional<ModeloChecklist> findById(String modeloChecklistId);
 
     void deleteById(String modeloEquipamentoId);

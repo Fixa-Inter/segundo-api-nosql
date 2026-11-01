@@ -6,6 +6,7 @@ import org.example.segundoapinosql.domain.model.StatusInspecaoEquipamento;
 import org.example.segundoapinosql.domain.repository.StatusInspecaoEquipamentoRepository;
 import org.example.segundoapinosql.infrastructure.database.mongo.repository.MongoStatusInspecaoEquipamentoRepository;
 import org.springframework.stereotype.Repository;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -25,5 +26,12 @@ public class StatusInspecaoEquipamentoRepositoryImpl implements StatusInspecaoEq
         return repository
                 .findByEquipamentoId(equipamentoId)
                 .map(mapper::toModel);
+    }
+
+    @Override
+    public List<StatusInspecaoEquipamento> findAllByModeloChecklistId(String modeloChecklistId) {
+        return repository.findAllByModeloChecklistId(modeloChecklistId).stream()
+                .map(mapper::toModel)
+                .toList();
     }
 }
