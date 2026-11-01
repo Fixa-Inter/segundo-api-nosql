@@ -29,9 +29,9 @@ public class ChecklistPendencyScheduler {
         executarJob("10h");
     }
 
-    @Scheduled(cron = "${app.jobs.checklist-pendencias.segundo-cron:0 15 18 * * *}", zone = "America/Sao_Paulo")
+    @Scheduled(cron = "${app.jobs.checklist-pendencias.segundo-cron:0 15 20 * * *}", zone = "America/Sao_Paulo")
     public void enviarSegundaNotificacao() {
-        executarJob("18h15min");
+        executarJob("20h15min");
     }
 
     private void executarJob(String horario) {
