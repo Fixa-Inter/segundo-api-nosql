@@ -48,8 +48,8 @@ firebase:
 app:
   jobs:
     checklist-pendencias:
-      primeiro-cron: ${JOB_CHECKLIST_PENDENCIAS_PRIMEIRO_CRON:0 0 10 * * *}
-      segundo-cron: ${JOB_CHECKLIST_PENDENCIAS_SEGUNDO_CRON:0 50 0 * * *}
+      primeiro-cron: 0 0 10 * * *
+      segundo-cron: 0 0 16 * * *
 
 management:
   health:
