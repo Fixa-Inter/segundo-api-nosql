@@ -28,6 +28,7 @@ public abstract class InspecaoChecklistSwagger implements InspecaoChecklistContr
             @ApiResponse(responseCode = "200", description = "Modelos encontrados",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = ModeloEquipamentoOutputDTO.class)))),
             @ApiResponse(responseCode = "401", description = "Não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Perfil sem permissão para preencher inspeções"),
             @ApiResponse(responseCode = "404", description = "Checklist não encontrado")
     })
     public abstract ResponseEntity<List<ModeloEquipamentoOutputDTO>> listarModelos(
@@ -35,12 +36,13 @@ public abstract class InspecaoChecklistSwagger implements InspecaoChecklistContr
             @Parameter(hidden = true) Authentication authentication
     );
 
-    @Operation(summary = "Cadastrar inspeção", description = "Registra uma inspeção e atualiza o status atual do equipamento.")
+    @Operation(summary = "Cadastrar inspeção", description = "Registra as respostas e atualiza as datas da próxima inspeção do equipamento.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Inspeção cadastrada",
                     content = @Content(schema = @Schema(implementation = InspecaoChecklistOutputDTO.class))),
             @ApiResponse(responseCode = "400", description = "Dados da inspeção inválidos"),
             @ApiResponse(responseCode = "401", description = "Não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Usuário sem acesso ao checklist ou equipamento"),
             @ApiResponse(responseCode = "404", description = "Checklist ou equipamento não encontrado")
     })
     public abstract ResponseEntity<InspecaoChecklistOutputDTO> cadastrar(

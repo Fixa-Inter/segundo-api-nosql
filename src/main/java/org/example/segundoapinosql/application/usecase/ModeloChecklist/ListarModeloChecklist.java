@@ -1,8 +1,10 @@
 package org.example.segundoapinosql.application.usecase.ModeloChecklist;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.example.segundoapinosql.application.exception.EntidadeNaoEncontradaException;
 import org.example.segundoapinosql.application.annotation.UseCase;
+import org.example.segundoapinosql.application.security.PermissaoChecklist;
+import org.example.segundoapinosql.domain.enums.TipoAcesso;
 import org.example.segundoapinosql.domain.model.ModeloChecklist;
 import org.example.segundoapinosql.domain.model.Usuario;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
@@ -12,7 +14,6 @@ import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
 import org.example.segundoapinosql.domain.model.ModeloEquipamentoChecklist;
 import org.example.segundoapinosql.domain.model.ModeloEquipamento;
 import org.example.segundoapinosql.domain.model.Equipamento;
-import org.example.segundoapinosql.infrastructure.exception.EntidadeNaoEncontradaException;
 
 import java.util.List;
 
@@ -25,9 +26,10 @@ public class ListarModeloChecklist {
     private final ModeloEquipamentoRepository modeloEquipamentoRepository;
     private final EquipamentoRepository equipamentoRepository;
 
-    public List<ModeloChecklist> listar(Long usuarioId) {
+    public List<ModeloChecklist> listar(Long usuarioId, TipoAcesso tipoAcesso) {
+        PermissaoChecklist.exigirInspecao(tipoAcesso);
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new EntityNotFoundException("exception.usuario.required"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.usuario.required"));
 
         List<ModeloChecklist> modelos = modeloChecklistRepository.findAll(usuario.getUnidadeId());
         if (modelos.isEmpty()) throw new EntidadeNaoEncontradaException("exception.modeloChecklist.notFound");

@@ -1,6 +1,7 @@
 package org.example.segundoapinosql.adapters.utils;
 
 import org.example.segundoapinosql.infrastructure.security.JwtAuthenticatedUser;
+import org.example.segundoapinosql.domain.enums.TipoAcesso;
 import org.springframework.security.core.Authentication;
 
 public final class ControllerUtils {
@@ -11,14 +12,12 @@ public final class ControllerUtils {
         return ((JwtAuthenticatedUser) authentication.getPrincipal()).id();
     }
 
-    public static boolean isGestor(Authentication authentication) {
-        return authentication
-                .getAuthorities()
-                .stream()
-                .anyMatch(
-                        authority -> "ROLE_GESTOR"
-                                .equals(authority.getAuthority())
-                );
+    public static TipoAcesso tipoAcesso(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .map(authority -> authority.getAuthority().replaceFirst("^ROLE_", ""))
+                .map(TipoAcesso::valueOf)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Tipo de acesso não encontrado no token"));
     }
 }
 

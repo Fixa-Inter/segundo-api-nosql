@@ -30,7 +30,8 @@ public abstract class ModeloChecklistSwagger implements ModeloChecklistControlle
                     @ApiResponse(responseCode = "201", description = "Modelo cadastrado",
                             content = @Content(schema = @Schema(implementation = ModeloChecklistOutputDTO.class))),
                     @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-                    @ApiResponse(responseCode = "401", description = "Não autenticado")
+                    @ApiResponse(responseCode = "401", description = "Não autenticado"),
+                    @ApiResponse(responseCode = "403", description = "Usuário sem acesso à unidade")
             })
     public abstract ResponseEntity<ModeloChecklistOutputDTO> cadastrar(
             @RequestBody(required = true, description = "Dados do modelo de checklist",
@@ -43,7 +44,8 @@ public abstract class ModeloChecklistSwagger implements ModeloChecklistControlle
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Modelos encontrados",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = ModeloChecklistOutputDTO.class)))),
-            @ApiResponse(responseCode = "401", description = "Não autenticado")
+            @ApiResponse(responseCode = "401", description = "Não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Perfil sem permissão para consultar checklists")
     })
     public abstract ResponseEntity<List<ModeloChecklistOutputDTO>> listar(@Parameter(hidden = true) Authentication authentication);
 
@@ -53,6 +55,7 @@ public abstract class ModeloChecklistSwagger implements ModeloChecklistControlle
                     content = @Content(schema = @Schema(implementation = ModeloChecklistOutputDTO.class))),
             @ApiResponse(responseCode = "400", description = "Dados inválidos"),
             @ApiResponse(responseCode = "401", description = "Não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Usuário sem acesso à unidade"),
             @ApiResponse(responseCode = "404", description = "Modelo não encontrado")
     })
     public abstract ResponseEntity<ModeloChecklistOutputDTO> atualizar(
@@ -67,6 +70,7 @@ public abstract class ModeloChecklistSwagger implements ModeloChecklistControlle
             @ApiResponse(responseCode = "200", description = "Modelo removido",
                     content = @Content(schema = @Schema(implementation = ModeloChecklistOutputDTO.class))),
             @ApiResponse(responseCode = "401", description = "Não autenticado"),
+            @ApiResponse(responseCode = "403", description = "Usuário sem acesso à unidade"),
             @ApiResponse(responseCode = "404", description = "Modelo não encontrado")
     })
     public abstract ResponseEntity<ModeloChecklistOutputDTO> deletar(

@@ -17,11 +17,11 @@ public class NoSqlOpenApiCustomizer implements OpenApiCustomizer {
 
         aplicar(openAPI, List.of(
                 new SwaggerEndpoint("POST", "/api/v1/modelo-checklist/cadastrar", "Modelos de checklist", "Cadastrar modelo de checklist", "Cria um modelo de checklist."),
-                new SwaggerEndpoint("GET", "/api/v1/modelo-checklist/listar", "Modelos de checklist", "Listar modelos de checklist", "Lista os modelos do unidade do usuário."),
+                new SwaggerEndpoint("GET", "/api/v1/modelo-checklist/listar", "Modelos de checklist", "Listar modelos de checklist", "Lista os modelos vinculados à unidade do usuário autenticado."),
                 new SwaggerEndpoint("PATCH", "/api/v1/modelo-checklist/atualizar", "Modelos de checklist", "Atualizar modelo de checklist", "Atualiza um modelo de checklist."),
                 new SwaggerEndpoint("DELETE", "/api/v1/modelo-checklist/deletar/{modeloChecklistId}", "Modelos de checklist", "Excluir modelo de checklist", "Remove um modelo de checklist."),
                 new SwaggerEndpoint("GET", "/api/v1/inspecao-checklist/modelos/{modeloChecklistId}", "Inspeções", "Listar modelos do checklist", "Lista somente os modelos vinculados ao checklist."),
-                new SwaggerEndpoint("POST", "/api/v1/inspecao-checklist/cadastrar", "Inspeções", "Cadastrar inspeção", "Registra uma inspeção do equipamento.")
+                new SwaggerEndpoint("POST", "/api/v1/inspecao-checklist/cadastrar", "Inspeções", "Cadastrar inspeção", "Registra as respostas e atualiza o prazo de inspeção do equipamento.")
         ));
     }
 

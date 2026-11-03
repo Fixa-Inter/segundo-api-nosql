@@ -4,6 +4,7 @@ import org.example.segundoapinosql.domain.model.PushNotification;
 
 import java.util.Set;
 
-public interface PushNotificationRepository {
+/** Porta de saída para entrega de notificações push. */
+public interface PushNotificationSender {
     void enviar(Set<String> tokens, PushNotification notification);
 }

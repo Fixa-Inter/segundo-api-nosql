@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.segundoapinosql.domain.enums.TipoAcesso;
-import org.example.segundoapinosql.domain.enums.converter.TipoAcessoConverter;
+import org.example.segundoapinosql.infrastructure.database.sql.entity.converter.TipoAcessoConverter;
 
 @Entity(name = "Usuario")
 @Getter
