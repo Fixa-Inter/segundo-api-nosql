@@ -6,7 +6,8 @@ import org.example.segundoapinosql.domain.model.ModeloChecklist;
 import org.example.segundoapinosql.domain.model.PushNotification;
 import org.example.segundoapinosql.domain.model.StatusInspecaoEquipamento;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
-import org.example.segundoapinosql.domain.repository.PushNotificationRepository;
+import org.example.segundoapinosql.domain.repository.PushNotificationSender;
+import org.example.segundoapinosql.domain.repository.NotificacaoRepository;
 import org.example.segundoapinosql.domain.repository.StatusInspecaoEquipamentoRepository;
 import org.example.segundoapinosql.domain.repository.TokenDispositivoRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +35,8 @@ public class NotificarChecklistsPendentes {
     private final StatusInspecaoEquipamentoRepository statusRepository;
     private final UsuarioRepository usuarioRepository;
     private final TokenDispositivoRepository tokenRepository;
-    private final PushNotificationRepository pushRepository;
+    private final PushNotificationSender pushSender;
+    private final NotificacaoRepository notificacaoRepository;
 
     /** Sends one push per active checklist model with at least one equipment pending inspection. */
     public int executar() {
@@ -56,14 +60,24 @@ public class NotificarChecklistsPendentes {
                     + "\" possui equipamentos pendentes de inspeção.";
 
             Set<String> tokens = new HashSet<>();
-            destinatarios.forEach(usuarioId -> tokens.addAll(tokenRepository.listarPorUsuario(usuarioId)));
+            LocalDateTime dataCriacao = LocalDateTime.now(ZONE_ID);
+            destinatarios.forEach(usuarioId -> {
+                try {
+                    notificacaoRepository.salvar(new org.example.segundoapinosql.domain.model.Notificacao(
+                            UUID.randomUUID().toString(), usuarioId, TIPO_NOTIFICACAO_CHECKLIST,
+                            modelo.getId(), mensagem, dataCriacao, false));
+                } catch (RuntimeException exception) {
+                    log.warn("Não foi possível salvar notificação de checklist {} no Redis para usuário {}.",
+                            modelo.getId(), usuarioId, exception);
+                }
+                tokens.addAll(tokenRepository.listarPorUsuario(usuarioId));
+            });
 
-            pushRepository.enviar(tokens, new PushNotification(
+            pushSender.enviar(tokens, new PushNotification(
                     "Checklist pendente",
                     mensagem,
                     TIPO_NOTIFICACAO_CHECKLIST,
-                    modelo.getId(),
-                    new HashSet<>(destinatarios)
+                    modelo.getId()
             ));
 
             modelosNotificados++;

@@ -1,16 +1,18 @@
 package org.example.segundoapinosql.application.usecase.InspecaoChecklist;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.example.segundoapinosql.adapters.dto.input.InspecionarChecklist.InspecaoChecklistCadastrarInputDTO;
+import org.example.segundoapinosql.application.exception.EntidadeNaoEncontradaException;
+import org.example.segundoapinosql.application.exception.RegraProblemaException;
 import org.example.segundoapinosql.application.annotation.UseCase;
+import org.example.segundoapinosql.application.security.PermissaoChecklist;
 import org.example.segundoapinosql.domain.model.*;
 import org.example.segundoapinosql.domain.repository.InspecaoChecklistRepository;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.StatusInspecaoEquipamentoRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
 import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
-import org.example.segundoapinosql.infrastructure.exception.RegraProblemaException;
+import org.example.segundoapinosql.domain.enums.TipoAcesso;
+import org.example.segundoapinosql.domain.model.input.InspecaoChecklistCadastroDados;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -28,14 +30,16 @@ public class CadastrarInspecaoChecklist {
     private final EquipamentoRepository equipamentoRepository;
 
     public InspecaoChecklist cadastrar(
-            InspecaoChecklistCadastrarInputDTO dto,
-            Long usuarioId
+            InspecaoChecklistCadastroDados dto,
+            Long usuarioId,
+            TipoAcesso tipoAcesso
     ) {
+        PermissaoChecklist.exigirInspecao(tipoAcesso);
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new EntityNotFoundException("validation.usuario.required"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("validation.usuario.required"));
 
         ModeloChecklist modeloChecklist = modeloChecklistRepository.findById(dto.modeloChecklistId())
-                .orElseThrow(() -> new EntityNotFoundException("exception.modeloChecklist.notFound"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.modeloChecklist.notFound"));
 
         if (!Objects.equals(modeloChecklist.getUnidadeId(), usuario.getUnidadeId()))
             throw new RegraProblemaException("exception.unidade.required");
@@ -54,7 +58,7 @@ public class CadastrarInspecaoChecklist {
             throw new RegraProblemaException("exception.equipamento.notInChecklist");
 
         Equipamento equipamento = equipamentoRepository.findById(dto.equipamentoId())
-                .orElseThrow(() -> new EntityNotFoundException("exception.equipamento.notFound"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.equipamento.notFound"));
 
         if (equipamento.getUsuario() == null
                 || !Objects.equals(equipamento.getUsuario().getUnidadeId(), usuario.getUnidadeId())) {

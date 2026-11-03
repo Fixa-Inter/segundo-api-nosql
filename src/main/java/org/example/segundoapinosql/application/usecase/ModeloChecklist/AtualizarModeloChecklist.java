@@ -1,23 +1,22 @@
 package org.example.segundoapinosql.application.usecase.ModeloChecklist;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.example.segundoapinosql.adapters.dto.input.Campo.CampoAtualizarInputDTO;
-import org.example.segundoapinosql.adapters.dto.input.ModeloChecklist.ModeloChecklistAtualizarInputDTO;
-import org.example.segundoapinosql.adapters.dto.input.Opcao.OpcaoAtualizarInputDTO;
-import org.example.segundoapinosql.adapters.dto.input.ModeloEquipamento.ModeloEquipamentoAtualizarInputDTO;
+import org.example.segundoapinosql.application.exception.EntidadeNaoEncontradaException;
+import org.example.segundoapinosql.application.exception.RegraProblemaException;
 import org.example.segundoapinosql.application.annotation.UseCase;
+import org.example.segundoapinosql.application.security.PermissaoChecklist;
 import org.example.segundoapinosql.domain.model.Campo;
 import org.example.segundoapinosql.domain.model.ModeloChecklist;
 import org.example.segundoapinosql.domain.model.ModeloEquipamento;
 import org.example.segundoapinosql.domain.model.ModeloEquipamentoChecklist;
 import org.example.segundoapinosql.domain.model.Opcao;
 import org.example.segundoapinosql.domain.model.Usuario;
+import org.example.segundoapinosql.domain.enums.TipoAcesso;
 import org.example.segundoapinosql.domain.repository.ModeloChecklistRepository;
 import org.example.segundoapinosql.domain.repository.UsuarioRepository;
 import org.example.segundoapinosql.domain.repository.ModeloEquipamentoRepository;
 import org.example.segundoapinosql.domain.repository.EquipamentoRepository;
-import org.example.segundoapinosql.infrastructure.exception.RegraProblemaException;
+import org.example.segundoapinosql.domain.model.input.ModeloChecklistAtualizacaoDados;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -36,14 +35,16 @@ public class AtualizarModeloChecklist {
     private final EquipamentoRepository equipamentoRepository;
 
     public ModeloChecklist atualizar(
-            ModeloChecklistAtualizarInputDTO dto,
-            Long usuarioId
+            ModeloChecklistAtualizacaoDados dto,
+            Long usuarioId,
+            TipoAcesso tipoAcesso
     ) {
+        PermissaoChecklist.exigirGestao(tipoAcesso);
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new EntityNotFoundException("validation.usuario.required"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("validation.usuario.required"));
 
         ModeloChecklist modeloChecklist = modeloChecklistRepository.findById(dto.id())
-                .orElseThrow(() -> new EntityNotFoundException("exception.modeloChecklist.notFound"));
+                .orElseThrow(() -> new EntidadeNaoEncontradaException("exception.modeloChecklist.notFound"));
 
         if (!usuario.getUnidadeId().equals(modeloChecklist.getUnidadeId())) {
             throw new RegraProblemaException("exception.access.denied");
@@ -88,14 +89,14 @@ public class AtualizarModeloChecklist {
     }
 
     private List<ModeloEquipamentoChecklist> validarEConstruirModelos(
-            List<ModeloEquipamentoAtualizarInputDTO> modelosDto,
+            List<ModeloChecklistAtualizacaoDados.ModeloEquipamento> modelosDto,
             Usuario usuario
     ) {
         return modelosDto.stream()
                 .map(modeloDto -> {
                     ModeloEquipamento modelo = modeloEquipamentoRepository
                             .findById(modeloDto.modeloEquipamentoId())
-                            .orElseThrow(() -> new EntityNotFoundException(
+                            .orElseThrow(() -> new EntidadeNaoEncontradaException(
                                     "exception.modeloEquipamento.notFound"
                             ));
 
@@ -107,7 +108,7 @@ public class AtualizarModeloChecklist {
                             .map(equipamentoDto -> {
                                 var equipamento = equipamentoRepository
                                         .findById(equipamentoDto.equipamentoId())
-                                        .orElseThrow(() -> new EntityNotFoundException(
+                                        .orElseThrow(() -> new EntidadeNaoEncontradaException(
                                                 "exception.equipamento.notFound"
                                         ));
 
@@ -147,13 +148,13 @@ public class AtualizarModeloChecklist {
     }
 
     private List<Campo> atualizarCampos(
-            List<CampoAtualizarInputDTO> dtoCampos,
+            List<ModeloChecklistAtualizacaoDados.Campo> dtoCampos,
             List<Campo> campos
     ) {
         List<Campo> camposAtuais = campos == null ? Collections.emptyList() : campos;
         List<Campo> camposAtualizados = new ArrayList<>();
 
-        for (CampoAtualizarInputDTO dtoCampo : dtoCampos) {
+        for (ModeloChecklistAtualizacaoDados.Campo dtoCampo : dtoCampos) {
             Campo campoExistente = camposAtuais.stream()
                     .filter(campo -> Objects.equals(campo.getId(), dtoCampo.id()))
                     .findFirst()
@@ -194,7 +195,7 @@ public class AtualizarModeloChecklist {
     }
 
     private List<Opcao> atualizarOpcoes (
-            List<OpcaoAtualizarInputDTO> dtoOpcoes,
+            List<ModeloChecklistAtualizacaoDados.Opcao> dtoOpcoes,
             List<Opcao> opcoes
     ) {
         List<Opcao> opcoesAtuais = opcoes == null ? Collections.emptyList() : opcoes;
@@ -204,7 +205,7 @@ public class AtualizarModeloChecklist {
             return opcoesAtualizadas;
         }
 
-        for (OpcaoAtualizarInputDTO dtoOpcao : dtoOpcoes) {
+        for (ModeloChecklistAtualizacaoDados.Opcao dtoOpcao : dtoOpcoes) {
             Opcao opcaoExistente = opcoesAtuais.stream()
                     .filter(opcao -> Objects.equals(opcao.getId(), dtoOpcao.id()))
                     .findFirst()
@@ -232,7 +233,7 @@ public class AtualizarModeloChecklist {
         return opcoesAtualizadas;
     }
 
-    private void validarNovoCampo(CampoAtualizarInputDTO campo) {
+    private void validarNovoCampo(ModeloChecklistAtualizacaoDados.Campo campo) {
         if (campo.nome() == null || campo.nome().isBlank()) {
             throw new IllegalArgumentException("validation.campo.nome.required");
         }
@@ -242,7 +243,7 @@ public class AtualizarModeloChecklist {
         }
     }
 
-    private void validarNovaOpcao(OpcaoAtualizarInputDTO opcao) {
+    private void validarNovaOpcao(ModeloChecklistAtualizacaoDados.Opcao opcao) {
         if (opcao.nome() == null || opcao.nome().isBlank()) {
             throw new IllegalArgumentException("validation.opcao.nome.required");
         }
